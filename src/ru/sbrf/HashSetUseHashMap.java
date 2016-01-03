@@ -2,43 +2,49 @@ package ru.sbrf;
 
 import java.util.HashMap;
 
-/**
- * Created by sbt-rogushkov-mv on 30.11.2015.
- */
-public class HashSetUseHashMap<E> implements OurHashSet{
-    private transient HashMap<E, Object> map;
+public class HashSetUseHashMap implements OurHashSet{
+    private transient HashMap<Object, Object> map;
 
     @Override
-    public int size() {
+    public synchronized int size() {
         return map.size();
     }
 
     @Override
-    public boolean add(Object o) {
-        if (map==null) map= new HashMap<>();
-        return map.put((E) o,new Object()) == null;
+    public synchronized boolean add(Object o) {
+        if (map == null)
+            map = new HashMap<>();
+        return map.put(o, new Object()) == null;
     }
 
     @Override
-    public void clear() {
+    public synchronized void clear() {
         map.clear();
     }
 
     @Override
-    public boolean remove(Object o) {
-        if (o != null) {
-            return map.remove((E) o) == new Object();
-        }
-        return false;
+    public synchronized boolean remove(Object o) {
+        return o != null && map.remove(o) == new Object();
     }
 
     @Override
-    public boolean isEmpty() {
+    public synchronized boolean isEmpty() {
         return map.isEmpty();
     }
 
     @Override
-    public boolean contains(Object o) {
-        return map.containsKey((E) o);
+    public synchronized boolean contains(Object o) {
+        return map.containsKey(o);
+    }
+
+    @Override
+    public synchronized String toString() {
+        Object[] values = map.keySet().toArray();
+        String str = "HashSetUseHashMap {";
+        for (Object value : values) {
+            str = str + value.toString() + ", ";
+        }
+        str = str.substring(0, str.length()-2) + '}';
+        return str;
     }
 }

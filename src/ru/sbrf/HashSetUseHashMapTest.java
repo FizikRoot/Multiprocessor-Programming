@@ -8,10 +8,8 @@ import java.util.concurrent.*;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by Fizik on 31.12.2015.
- */
-public class HashSetUseHashMapWithLockTest {
+
+public class HashSetUseHashMapTest {
     public final static int THREAD_POOL_SIZE = 5;
 
     @org.junit.Before

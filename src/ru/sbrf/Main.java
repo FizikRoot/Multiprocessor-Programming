@@ -1,28 +1,38 @@
 package ru.sbrf;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-
-/**
- * Created by sbt-rogushkov-mv on 30.11.2015.
- */
 public class Main {
-    public static final Integer numberOfCore = 4;
+
+    public static final Integer numberOfThreads = 2;
+
     public static void main(String[] args) {
-        OurHashSet hs = new HashSetUseHashMap<Object>();
 
-        hs.add("A");
-        hs.add(10);
-        System.out.println(hs);
-        for (int i = 0; i < numberOfCore ; i++) {
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
+        final OurHashSet hs = new HashSetUseHashMap();
 
-                }
-            });
-            thread.start();
-        }
+        hs.add('A');
+        hs.add('B');
+
+        Thread t1 = new Thread(){
+            public void run(){
+                hs.add('C');
+                System.out.println(this.getName());
+                System.out.println(hs);
+            }
+        };
+
+        Thread t2 = new Thread(){
+            public void run(){
+                hs.remove('C');
+                hs.add('D');
+                System.out.println(this.getName());
+                System.out.println(hs);
+            }
+        };
+
+        t1.setName("th1");
+        t2.setName("th2");
+
+        t1.start();
+        t2.start();
+
     }
 }

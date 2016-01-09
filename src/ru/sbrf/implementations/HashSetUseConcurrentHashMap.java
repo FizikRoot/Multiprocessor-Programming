@@ -28,7 +28,7 @@ public class HashSetUseConcurrentHashMap implements OurHashSet {
         return map.containsKey(o);
     }
 
-    //@Override
+    @Override
     public boolean isEmpty() {
         return map.isEmpty();
     }
@@ -38,21 +38,11 @@ public class HashSetUseConcurrentHashMap implements OurHashSet {
         return map.remove(o) != null;
     }
 
-    //@Override
+    @Override
     public void clear() {
         map.clear();
     }
 
-    @Override
-    /*public String toString() {
-        Object[] values = map.keySet().toArray();
-        String str = "HashSetUseConcurrentHashMap {";
-        for (Object value : values) {
-            str = str + value.toString() + ", ";
-        }
-        str = str.substring(0, str.length()-2) + '}';
-        return str;
-    }*/
 
     public String toString() {
         Object[] values = map.keySet().toArray();

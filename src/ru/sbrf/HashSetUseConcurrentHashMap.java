@@ -1,3 +1,7 @@
+package ru.sbrf;
+
+import ru.sbrf.OurHashSet;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 

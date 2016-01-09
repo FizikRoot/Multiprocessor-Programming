@@ -1,3 +1,4 @@
+package ru.sbrf;
 
 public class OurHashMap<K, V> {
 
@@ -18,6 +19,10 @@ public class OurHashMap<K, V> {
     }
 
     public OurHashMap(){
+        table = new Entry[capacity];
+    }
+
+    public void clear(){
         table = new Entry[capacity];
     }
 

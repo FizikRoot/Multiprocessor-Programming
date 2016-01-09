@@ -22,6 +22,10 @@ public class OurHashMap<K, V> {
         table = new Entry[capacity];
     }
 
+    public void clear(){
+        table = new Entry[capacity];
+    }
+
     private int hash(K key){
         return Math.abs(key.hashCode()) % capacity;
     }

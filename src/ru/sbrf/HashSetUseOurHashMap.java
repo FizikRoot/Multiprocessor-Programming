@@ -1,3 +1,5 @@
+package ru.sbrf;
+
 public class HashSetUseOurHashMap implements OurHashSet{
 
     private OurHashMap<Object, Object> map;
@@ -17,6 +19,11 @@ public class HashSetUseOurHashMap implements OurHashSet{
     }
 
     @Override
+    public synchronized void clear() {
+        map.clear();
+    }
+
+    @Override
     public synchronized boolean contains(Object o) {
         return map.contains(o) != null;
     }
@@ -24,6 +31,11 @@ public class HashSetUseOurHashMap implements OurHashSet{
     @Override
     public synchronized boolean remove(Object o) {
         return map.remove(o);
+    }
+
+    @Override
+    public synchronized boolean isEmpty() {
+        return map.size()==0;
     }
 
     public synchronized String toString(){

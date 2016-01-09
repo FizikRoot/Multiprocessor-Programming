@@ -75,7 +75,7 @@ public class ConcurrentHashSetTest {
 
         long time = 0;
 
-        for (int i  = 0 ; i < TEST_NUMBER*100 ; i++) {
+        for (int i = 0; i < TEST_NUMBER * 100; i++) {
 
             long startTime = System.nanoTime();
 
@@ -94,13 +94,13 @@ public class ConcurrentHashSetTest {
             time = time + (endTime - startTime);
         }
 
-        return time / (TEST_NUMBER*100) ;
+        return time / (TEST_NUMBER * 100);
 
     }
 
     public static void throughtputCount(final OurHashSet hs) throws InterruptedException {
 
-        System.out.println("Test started for: " + hs.getClass());
+        System.out.println("Test started for: " + hs.getClass().getSimpleName());
 
         long totalTime;
         long sumTime = 0;
@@ -134,22 +134,17 @@ public class ConcurrentHashSetTest {
             sumTime += totalTime;
             //System.out.println(CAPACITY + " elem added in " + totalTime + " ms");
         }
-        String[] classPath = hs.getClass().toString().split("\\.");
 
         long avgTime = sumTime / TEST_NUMBER;
         int throughtput = (int) (CAPACITY / avgTime);
 
-
-        if (classPath.length == 5)
-            System.out.println("For " + classPath[4] + " throughput is " + throughtput + " elem/ms");
-        else
-            System.out.println("For " + classPath[3] + " throughput is " + throughtput + " elem/ms");
+        System.out.println("For " + hs.getClass().getSimpleName() + " throughput is " + throughtput + " elem/ms");
     }
 
     public static void latencyCount(final OurHashSet hs) throws InterruptedException {
 
-        final Thread myThread = new Thread(){
-            public void run(){
+        final Thread myThread = new Thread() {
+            public void run() {
 
                 long totalTime;
                 long sumTime = 0;
@@ -170,15 +165,9 @@ public class ConcurrentHashSetTest {
                     //System.out.println(CAPACITY + " elem added in " + totalTime + " ms");
                 }
 
-                String[] classPath = hs.getClass().toString().split("\\.");
-
                 int latency = (int) ((sumTime / CAPACITY) / TEST_NUMBER);
 
-                if (classPath.length == 5)
-                    System.out.println("For " + classPath[4] + " latency is " + latency + " ns\n");
-                else
-                    System.out.println("For " + classPath[3] + " latency is " + latency + " ns\n");
-
+                System.out.println("For " + hs.getClass().getSimpleName() + " latency is " + latency + " ns");
             }
         };
 

@@ -22,8 +22,8 @@ public class HashSetUseOurHashMap implements OurHashSet {
     }
 
     @Override
-    public void clear() {
-
+    public synchronized void clear() {
+        map.clear();
     }
 
     @Override
@@ -37,8 +37,8 @@ public class HashSetUseOurHashMap implements OurHashSet {
     }
 
     @Override
-    public boolean isEmpty() {
-        return false;
+    public synchronized boolean isEmpty() {
+        return map.isEmpty();
     }
 
     public synchronized String toString(){

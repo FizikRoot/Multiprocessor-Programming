@@ -1,107 +1,195 @@
 package ru.sbrf.test;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.concurrent.*;
+import org.junit.Test;
 
-import static org.junit.Assert.*;
+import ru.sbrf.OurHashSet;
+import ru.sbrf.implementations.HashSetUseConcurrentHashMap;
+import ru.sbrf.implementations.HashSetUseOurHashMap;
+import ru.sbrf.implementations.standartHashMapImpl.HashSetUseHashMapSyncrBlock;
+import ru.sbrf.implementations.standartHashMapImpl.HashSetUseHashMapSyncrMethod;
+import ru.sbrf.implementations.standartHashMapImpl.HashSetUseHashMapWithLock;
+import ru.sbrf.implementations.standartHashMapImpl.HashSetUseVolatileHashMap;
+
+import java.util.concurrent.*;
 
 
 public class HashSetUseHashMapTest {
-    public final static int THREAD_POOL_SIZE = 5;
 
-    @org.junit.Before
-    public void setUp() throws Exception {
+    public final static int THREAD_POOL_SIZE = 4;
+    public final static int CAPACITY = 5000;
+    public final static int TEST_NUMBER = 10;
 
-    }
+    private static long overheadTime = 1021945; //ns
 
-    public void test(final Map<Object,Object> test){
+    public void test(final OurHashSet hs){
         Executor e = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
-        for(int i =0; i < 5000; i++){
+        for(int i = 0; i < CAPACITY; i++){
             e.execute(new Runnable(){
                 public void run(){
-                    test.put(new Object(),new Object());
+                    hs.add(new Object());
                 }
             });
         }
     }
 
-    @org.junit.Test
-    public void testHashMap() throws Exception {
-        HashMap<Object, Object> hashMap = new HashMap<>();
-        test(hashMap); //will probably go into an infinite loop
-        System.out.println(hashMap.size());
+    @Test
+    public void testHashSetUseConcurrentHashMap() throws Exception {
+        OurHashSet hs = new HashSetUseConcurrentHashMap();
+        throughtputCount(hs);
+        latencyCount(hs);
     }
 
-
-    @org.junit.Test
-    public void testConcurrentHashMap() throws Exception {
-        ConcurrentHashMap<Object, Object> hashMap = new ConcurrentHashMap<>();
-        test(hashMap); //will *never* go into an infinite loop
-        System.out.println(hashMap.size());
+    @Test
+    public void testHashSetUseOurHashMap() throws Exception {
+        OurHashSet hs = new HashSetUseOurHashMap();
+        throughtputCount(hs);
+        latencyCount(hs);
     }
 
-    @org.junit.Test
-    public void testCrunchifyPerformHash() throws Exception {
-        Map<String, Integer> crunchifySynchronizedMapObject = new Hashtable<String, Integer>();
-        crunchifyPerform(crunchifySynchronizedMapObject);
+    @Test
+    public void testHashSetUseHashMapSyncBlock() throws Exception {
+        OurHashSet hs = new HashSetUseHashMapSyncrBlock();
+        throughtputCount(hs);
+        latencyCount(hs);
     }
 
-
-    @org.junit.Test
-    public void testCrunchifyPerformConcurrentHash() throws Exception {
-        Map<String, Integer> crunchifySynchronizedMapObject = new ConcurrentHashMap<String, Integer>();
-        crunchifyPerform(crunchifySynchronizedMapObject);
+    @Test
+    public void testHashSetUseHashMapSyncMethod() throws Exception {
+        OurHashSet hs = new HashSetUseHashMapSyncrMethod();
+        throughtputCount(hs);
+        latencyCount(hs);
     }
 
-
-    @org.junit.Test
-    public void testConcurrentSynchroHashMap() throws Exception {
-        Map<String, Integer> crunchifySynchronizedMapObject = Collections.synchronizedMap(new HashMap<String, Integer>());
-        crunchifyPerform(crunchifySynchronizedMapObject);
+    @Test
+    public void testHashSetUseHashMapWithLock() throws Exception {
+        OurHashSet hs = new HashSetUseHashMapWithLock();
+        throughtputCount(hs);
+        latencyCount(hs);
     }
 
-    public static void crunchifyPerform(final Map<String, Integer> crunchifyThreads) throws InterruptedException {
+    @Test
+    public void testHashSetUseVolatileHashMap() throws Exception {
+        OurHashSet hs = new HashSetUseVolatileHashMap();
+        throughtputCount(hs);
+        latencyCount(hs);
+    }
 
-        System.out.println("Test started for: " + crunchifyThreads.getClass());
-        long averageTime = 0;
-        for (int i = 0; i < 5; i++) {
+    public long getThroughtputOverheadTime() throws InterruptedException {
+
+        long time = 0;
+
+        for (int i  = 0 ; i < TEST_NUMBER*100 ; i++) {
 
             long startTime = System.nanoTime();
-            ExecutorService crunchifyExServer = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+
+            ExecutorService es = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+            for (int j = 0; j < THREAD_POOL_SIZE; j++) {
+                es.execute(new Runnable() {
+                    public void run() {
+
+                    }
+                });
+            }
+            es.shutdown();
+            es.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+
+            long endTime = System.nanoTime();
+            time = time + (endTime - startTime);
+        }
+
+        return time / (TEST_NUMBER*100) ;
+
+    }
+
+    public static void throughtputCount(final OurHashSet hs) throws InterruptedException {
+
+        System.out.println("Test started for: " + hs.getClass());
+
+        long totalTime;
+        long sumTime = 0;
+
+        for (int i = 0; i < TEST_NUMBER; i++) {
+
+            long startTime = System.nanoTime();
+
+            ExecutorService es = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
 
             for (int j = 0; j < THREAD_POOL_SIZE; j++) {
-                crunchifyExServer.execute(new Runnable() {
+                es.execute(new Runnable() {
                     @SuppressWarnings("unused")
                     @Override
                     public void run() {
-
-                        for (int i = 0; i < 500000; i++) {
-                            Integer crunchifyRandomNumber = (int) Math.ceil(Math.random() * 550000);
-
-                            // Retrieve value. We are not using it anywhere
-                            Integer crunchifyValue = crunchifyThreads.get(String.valueOf(crunchifyRandomNumber));
-
-                            // Put value
-                            crunchifyThreads.put(String.valueOf(crunchifyRandomNumber), crunchifyRandomNumber);
+                        for (int i = 0; i < CAPACITY; i++) {
+                            Integer r = (int) Math.ceil(Math.random() * CAPACITY);
+                            hs.add(r);
                         }
                     }
                 });
             }
 
-            // Make sure executor stops
-            crunchifyExServer.shutdown();
+            es.shutdown();
 
-            // Blocks until all tasks have completed execution after a shutdown request
-            crunchifyExServer.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+            es.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
 
             long entTime = System.nanoTime();
-            long totalTime = (entTime - startTime) / 1000000L;
-            averageTime += totalTime;
-            System.out.println("2500K entried added/retrieved in " + totalTime + " ms");
+
+            totalTime = ((entTime - startTime) - overheadTime) / 1000000L;
+            sumTime += totalTime;
+            //System.out.println(CAPACITY + " elem added in " + totalTime + " ms");
         }
-        System.out.println("For " + crunchifyThreads.getClass() + " the average time is " + averageTime / 5 + " ms\n");
+        String[] classPath = hs.getClass().toString().split("\\.");
+
+        long avgTime = sumTime / TEST_NUMBER;
+        int throughtput = (int) (CAPACITY / avgTime);
+
+
+        if (classPath.length == 5)
+            System.out.println("For " + classPath[4] + " throughput is " + throughtput + " elem/ms\n");
+        else
+            System.out.println("For " + classPath[3] + " throughput is " + throughtput + " elem/ms\n");
+    }
+
+    public static void latencyCount(final OurHashSet hs) throws InterruptedException {
+
+        System.out.println("Test started for: " + hs.getClass());
+
+
+        final Thread myThread = new Thread(){
+            public void run(){
+
+                long totalTime;
+                long sumTime = 0;
+
+                for (int j = 0; j < TEST_NUMBER; j++) {
+
+                    long startTime = System.nanoTime();
+
+                    for (int i = 0; i < CAPACITY; i++) {
+                        Integer r = (int) Math.ceil(Math.random() * CAPACITY);
+                        hs.add(r);
+                    }
+
+                    long entTime = System.nanoTime();
+
+                    totalTime = (entTime - startTime);
+                    sumTime += totalTime;
+                    //System.out.println(CAPACITY + " elem added in " + totalTime + " ms");
+                }
+
+                String[] classPath = hs.getClass().toString().split("\\.");
+
+                int latency = (int) (sumTime / CAPACITY);
+
+                if (classPath.length == 5)
+                    System.out.println("For " + classPath[4] + " latency is " + latency + " ns\n");
+                else
+                    System.out.println("For " + classPath[3] + " latency is " + latency + " ns\n");
+
+            }
+        };
+
+        myThread.start();
+        myThread.join();
+
     }
 }

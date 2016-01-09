@@ -148,6 +148,10 @@ public class OurHashMap<K, V> {
         }
     }
 
+    public boolean isEmpty(){
+        return (size() == 0);
+    }
+
     public String strSet(){
         String str = "[";
 

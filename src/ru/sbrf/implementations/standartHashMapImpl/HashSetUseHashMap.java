@@ -5,7 +5,7 @@ import ru.sbrf.OurHashSet;
 import java.util.HashMap;
 
 public class HashSetUseHashMap<E> implements OurHashSet {
-    private transient HashMap<E, Object> map;
+    protected transient HashMap<E, Object> map;
 
     @Override
     public int size() {

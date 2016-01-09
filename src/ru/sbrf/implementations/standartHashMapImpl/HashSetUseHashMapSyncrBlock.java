@@ -31,7 +31,7 @@ public class HashSetUseHashMapSyncrBlock implements OurHashSet {
 
     @Override
     public boolean remove(Object o) {
-        ThreadLocal<Boolean> isDeleted =  new ThreadLocal<>();;
+        ThreadLocal<Boolean> isDeleted =  new ThreadLocal<>();
         if ( o != null) {
             synchronized (this) {
                 isDeleted.set(map.remove(o) == new Object());

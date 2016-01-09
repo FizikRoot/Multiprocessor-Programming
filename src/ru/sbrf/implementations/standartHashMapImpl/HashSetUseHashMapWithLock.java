@@ -5,7 +5,8 @@ import ru.sbrf.OurHashSet;
 /**
  * Created by sbt-rogushkov-mv on 30.11.2015.
  */
-public class HashSetUseHashMapWithLock implements OurHashSet {
+public class HashSetUseHashMapWithLock<T> extends HashSetUseHashMap<T> {
+
     @Override
     public int size() {
         return 0;
@@ -17,17 +18,7 @@ public class HashSetUseHashMapWithLock implements OurHashSet {
     }
 
     @Override
-    public void clear() {
-
-    }
-
-    @Override
     public boolean remove(Object o) {
-        return false;
-    }
-
-    @Override
-    public boolean isEmpty() {
         return false;
     }
 

@@ -1,8 +1,10 @@
-package ru.sbrf;
+package ru.sbrf.implementations.standartHashMapImpl;
+
+import ru.sbrf.OurHashSet;
 
 import java.util.HashMap;
 
-public class HashSetUseHashMap<E> implements OurHashSet{
+public class HashSetUseHashMap<E> implements OurHashSet {
     private transient HashMap<E, Object> map;
 
     @Override

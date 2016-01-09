@@ -5,7 +5,7 @@ public class HashSetUseOurHashMap implements OurHashSet{
     private OurHashMap<Object, Object> map;
 
     public HashSetUseOurHashMap(){
-       map = new OurHashMap<>();
+       map = new OurHashMap<Object, Object>();
     }
 
     @Override
